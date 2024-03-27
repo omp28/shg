@@ -5,7 +5,7 @@ const Navbar = () => {
     <nav className="bg-gray-800 text-white p-4">
       <div className="container mx-auto flex justify-between items-center">
         <div>
-          <a to="/" className="text-xl font-bold">
+          <a href="/" className="text-xl font-bold">
             SHG Portal
           </a>
         </div>

@@ -39,7 +39,7 @@ const Home = () => {
         <ul>
           {transactions.slice(0, 10).map((transaction, index) => (
             <li key={index} className="mb-4">
-              <p>Amount: ${transaction.amount}</p>
+              <p>Amount: ₹{transaction.amount}</p>
               <p>Duration: {transaction.duration} months</p>
               <p>Interest Rate: {transaction.interest}%</p>
               <p>Members: {transaction.members}</p>
