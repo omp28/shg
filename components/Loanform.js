@@ -29,7 +29,11 @@ const LoanForm = ({ onSaveLoan }) => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    onSaveLoan(loanData);
+    onSaveLoan({
+      ...loanData,
+      name: loanData.name,
+      phoneNumber: loanData.phoneNumber,
+    });
     setLoanData({
       amount: "",
       duration: "",

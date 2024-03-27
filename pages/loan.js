@@ -2,15 +2,12 @@ import React, { useState, useEffect } from "react";
 import LoanForm from "../components/Loanform";
 
 const Home = () => {
-  const initialCommonPool = 10000; // Initial common pool amount
+  const initialCommonPool = 10000;
 
-  // State to manage common pool amount
   const [commonPool, setCommonPool] = useState(initialCommonPool);
 
-  // State to manage transactions
   const [transactions, setTransactions] = useState([]);
 
-  // Function to retrieve transactions and common pool from localStorage
   useEffect(() => {
     const storedTransactions =
       JSON.parse(localStorage.getItem("transactions")) || [];
@@ -20,20 +17,19 @@ const Home = () => {
     if (storedCommonPool !== null) {
       setCommonPool(storedCommonPool);
     } else {
-      setCommonPool(initialCommonPool); // If not found, set to initial value
+      setCommonPool(initialCommonPool);
     }
   }, []);
 
-  // Function to handle saving loan transaction
   const handleSaveLoan = (loanData) => {
     const { amount, duration, interest, members } = loanData;
 
-    // Update common pool
     const updatedCommonPool = commonPool - parseFloat(amount);
     setCommonPool(updatedCommonPool);
 
-    // Add transaction
     const newTransaction = {
+      name: loanData.name,
+      phoneNumber: loanData.phoneNumber,
       amount: parseFloat(amount),
       duration: parseInt(duration),
       interest: parseFloat(interest),
@@ -43,7 +39,6 @@ const Home = () => {
     const updatedTransactions = [newTransaction, ...transactions];
     setTransactions(updatedTransactions);
 
-    // Save common pool and transactions to localStorage
     localStorage.setItem("commonPool", JSON.stringify(updatedCommonPool));
     localStorage.setItem("transactions", JSON.stringify(updatedTransactions));
   };
