@@ -46,7 +46,7 @@ const LoanForm = ({ onSaveLoan }) => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-black text-white w-96">
+    <div className="flex justify-center items-center h-screen bg-black text-white w-96 mt-10">
       <form onSubmit={handleFormSubmit} className="bg-gray-800 p-8 rounded-lg">
         <div className="mb-4 w-96">
           <label htmlFor="name" className="block mb-2">
