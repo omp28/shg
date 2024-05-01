@@ -22,12 +22,22 @@ const Navbar = () => {
           </li>
           <li className="ml-4">
             <a href="/" className="hover:text-gray-300">
-              Loan-Repayment
+              {/* Loan-Repayment */}
             </a>
           </li>
           <li className="ml-4">
             <a href="/savings" className="hover:text-gray-300">
               Savings
+            </a>
+          </li>
+          <li className="ml-4">
+            <a href="/addnewmember" className="hover:text-gray-300">
+              Add New Member
+            </a>
+          </li>
+          <li className="ml-4">
+            <a href="/allmebers" className="hover:text-gray-300">
+              All Members
             </a>
           </li>
         </ul>
