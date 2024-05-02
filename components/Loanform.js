@@ -27,22 +27,34 @@ const LoanForm = ({ onSaveLoan }) => {
     }
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    onSaveLoan({
-      ...loanData,
-      name: loanData.name,
-      phoneNumber: loanData.phoneNumber,
-    });
-    setLoanData({
-      amount: "",
-      duration: "",
-      interest: "",
-      members: [],
-      name: "",
-      membershipId: "",
-      phoneNumber: "",
-    });
+    try {
+      const response = await fetch("/api/loanapi", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(loanData),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to save loan");
+      }
+      // Assuming the response from the server indicates success
+      onSaveLoan(loanData);
+      setLoanData({
+        amount: "",
+        duration: "",
+        interest: "",
+        members: [],
+        name: "",
+        membershipId: "",
+        phoneNumber: "",
+      });
+    } catch (error) {
+      console.error("Error saving loan:", error.message);
+      // Handle error state or display error message to the user
+    }
   };
 
   return (
