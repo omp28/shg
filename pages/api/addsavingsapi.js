@@ -6,17 +6,17 @@ export default async function handler(req, res, connection) {
   }
 
   try {
-    const { name, age, address, monthlyIncome, marriageStatus } = req.body;
+    const { id, amount, date } = req.body;
     const connection = await pool.getConnection();
     await connection.beginTransaction();
     let latestID = await connection.query(
-        `select memberID from members order by memberID desc limit 1`
+        `select contriID from contributions order by contriID desc limit 1`
     );
-    latestID = parseInt(latestID[0][0].memberID)
+    latestID = parseInt(latestID[0][0].contriID)
     latestID += 1;
     const [result] = await connection.query(
-      `INSERT INTO members (memberID, name, age, address, salary, marital_status) VALUES (?, ?, ?, ?, ?, ?)`,
-      [latestID, name, age, address, monthlyIncome, marriageStatus === "married" ? 1 : 0]
+      `INSERT INTO contributions (contriID, memberID, amount, Date_of_Contribution) VALUES (?, ?, ?, ?)`,
+      [latestID, id, amount, date]
     );
 
     await connection.commit();

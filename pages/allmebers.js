@@ -4,9 +4,9 @@ const AllMembers = () => {
 
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); // Add state for errors
+  const [error, setError] = useState(null);
 
-  const apiUrl = "/api/amemberapi"; // Replace with your actual URL
+  const apiUrl = "/api/amemberapi";
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -36,7 +36,7 @@ const AllMembers = () => {
   }
 
   if (error) {
-    return <p className="text-red-500">Error: {error}</p>; // Display error message
+    return <p className="text-red-500">Error: {error}</p>;
   }
 
   return (

@@ -31,6 +31,11 @@ const Navbar = () => {
             </a>
           </li>
           <li className="ml-4">
+            <a href="/addsaving" className="hover:text-gray-300">
+              Add Saving
+            </a>
+          </li>
+          <li className="ml-4">
             <a href="/addnewmember" className="hover:text-gray-300">
               Add New Member
             </a>
