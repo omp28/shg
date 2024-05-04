@@ -91,21 +91,6 @@ const LoanForm = ({ onSaveLoan }) => {
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="phoneNumber" className="block mb-2">
-            Phone Number:
-          </label>
-          <input
-            type="tel"
-            name="phoneNumber"
-            id="phoneNumber"
-            value={loanData.phoneNumber}
-            onChange={handleInputChange}
-            placeholder="Enter Phone Number"
-            required
-            className="w-full px-3 py-2 rounded bg-gray-700 focus:outline-none focus:bg-gray-600"
-          />
-        </div>
-        <div className="mb-4">
           <label htmlFor="amount" className="block mb-2">
             Loan Amount:
           </label>
@@ -149,22 +134,6 @@ const LoanForm = ({ onSaveLoan }) => {
             required
             className="w-full px-3 py-2 rounded bg-gray-700 focus:outline-none focus:bg-gray-600"
           />
-        </div>
-        <div className="mb-4">
-          <label className="block mb-2">SHG Members:</label>
-          <div>
-            <input
-              type="checkbox"
-              id="member1"
-              name="member1"
-              onChange={() => handleCheckboxChange("Member 1")}
-              checked={loanData.members.includes("Member 1")}
-            />
-            <label htmlFor="member1" className="ml-2 text-gray-300">
-              Member 1
-            </label>
-          </div>
-          {/* Add more members as needed */}
         </div>
         <button
           type="submit"

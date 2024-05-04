@@ -19,21 +19,28 @@ const AddNewMember = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
     if (!Object.values(formData).every((value) => value !== "")) {
       alert("Please fill out all fields before submitting.");
       return;
     }
 
-    const existingMembers = JSON.parse(localStorage.getItem("newMember")) || [];
-
-    const updatedMembers = Array.isArray(existingMembers)
-      ? [...existingMembers, formData]
-      : [formData];
-
-    localStorage.setItem("newMember", JSON.stringify(updatedMembers));
+    try {
+      const response = await fetch("/api/memberapi", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to save loan");
+      }
+    } catch (error) {
+      console.error("Error saving loan:", error.message);
+    }
 
     setFormData({
       name: "",
