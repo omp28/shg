@@ -6,7 +6,7 @@ const LoanForm = ({ onSaveLoan }) => {
     duration: "",
     interest: "",
     members: [],
-    name: "",
+    date: "",
     membershipId: "",
     phoneNumber: "",
   });
@@ -47,7 +47,7 @@ const LoanForm = ({ onSaveLoan }) => {
         duration: "",
         interest: "",
         members: [],
-        name: "",
+        date: "",
         membershipId: "",
         phoneNumber: "",
       });
@@ -61,21 +61,6 @@ const LoanForm = ({ onSaveLoan }) => {
     <div className="flex justify-center items-center h-screen bg-black text-white w-96 mt-10">
       <form onSubmit={handleFormSubmit} className="bg-gray-800 p-8 rounded-lg">
         <div className="mb-4 w-96">
-          <label htmlFor="name" className="block mb-2">
-            Name:
-          </label>
-          <input
-            type="text"
-            name="name"
-            id="name"
-            value={loanData.name}
-            onChange={handleInputChange}
-            placeholder="Enter Name"
-            required
-            className="w-full px-3 py-2 rounded bg-gray-700 focus:outline-none focus:bg-gray-600"
-          />
-        </div>
-        <div className="mb-4">
           <label htmlFor="membershipId" className="block mb-2">
             SHG Membership ID:
           </label>
@@ -120,6 +105,23 @@ const LoanForm = ({ onSaveLoan }) => {
             className="w-full px-3 py-2 rounded bg-gray-700 focus:outline-none focus:bg-gray-600"
           />
         </div>
+        <div className="mb-4">
+            <label
+              htmlFor="date"
+              className="block mb-2"
+            >
+              Date
+            </label>
+            <input
+              type="date"
+              id="date"
+              name="date"
+              value={loanData.date}
+              onChange={handleInputChange}
+              required
+              className="w-full px-3 py-2 rounded bg-gray-700 focus:outline-none focus:bg-gray-600 text-gray-400"
+            />
+          </div>
         <div className="mb-4">
           <label htmlFor="interest" className="block mb-2">
             Interest Rate (%):

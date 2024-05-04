@@ -9,16 +9,30 @@ export default async function handler(req, res, connection) {
     const { id, amount, date } = req.body;
     const connection = await pool.getConnection();
     await connection.beginTransaction();
-    let latestID = await connection.query(
-        `select contriID from contributions order by contriID desc limit 1`
+    let cid = 0
+    let checkid = await connection.query(
+      `select contriID from contributions order by contriID desc limit 1`
     );
-    latestID = parseInt(latestID[0][0].contriID)
-    latestID += 1;
-    const [result] = await connection.query(
+    if (checkid[0].length != 0){
+      cid = parseInt(checkid[0][0].ContriID)
+    }
+    cid += 1;
+    let tid = 0;
+    checkid = await connection.query(
+      `select transactionid from transactions order by transactionid desc limit 1`
+    )
+    if (checkid[0].length != 0){
+      tid = parseInt(checkid[0][0].transactionID)
+    }
+    tid += 1;
+    await connection.query(
       `INSERT INTO contributions (contriID, memberID, amount, Date_of_Contribution) VALUES (?, ?, ?, ?)`,
-      [latestID, id, amount, date]
+      [cid, id, amount, date]
     );
-
+    await connection.query(
+        `insert into transactions (transactionid, contriid, type) values (?, ?, "Contribution")`,
+        [tid, cid]
+    );
     await connection.commit();
     connection.release();
     res.status(200).json({ success: true, message: "Member added successfully" });

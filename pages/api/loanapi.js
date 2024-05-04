@@ -1,13 +1,33 @@
 import pool from "@/lib/db";
 
-export default async function postQuery(req, res) {
+export default async function postQuery(req, res, connection) {
   try {
-    const { name, duration, interest, amount, phoneNumber,membershipId } = req.body;
-    const connection = await pool.getConnection(); // Await here
+    const { membershipId, duration, amount, interest, date } = req.body;
+    const connection = await pool.getConnection();
     await connection.beginTransaction();
-    const [result] = await connection.query(
-      'INSERT INTO loan (name, duration, interest_rate, phoneNumber, amount, Date_Of_Issue,memberID) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)',
-      [name, duration, interest, phoneNumber, amount, membershipId]
+    let loanid = 0
+    let checkid = await connection.query(
+      `select loanid from loan order by loanid desc limit 1`
+    );
+    if (checkid[0].length != 0){
+      loanid = parseInt(checkid[0][0].loanid)
+    }
+    loanid += 1;
+    let tid = 0;
+    checkid = await connection.query(
+      `select transactionid from transactions order by transactionid desc limit 1`
+    )
+    if (checkid[0].length != 0){
+      tid = parseInt(checkid[0][0].transactionID)
+    }
+    tid += 1;
+    await connection.query(
+      'INSERT INTO loan (loanid, memberID, duration, amount, interest_rate, Date_Of_Issue) VALUES (?, ?, ?, ?, ?, ?)',
+      [loanid, membershipId, duration, amount, interest, date]
+    );
+    await connection.query(
+      `insert into transactions (transactionid, loanid, type) values (?, ?, "Loan")`,
+      [tid, loanid]
     );
     await connection.commit();
     connection.release();
