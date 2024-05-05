@@ -1,21 +1,49 @@
 import React, { useState, useEffect } from "react";
-import LoanForm from "../components/Loanform";
 
 const Home = () => {
-  const [commonPool, setCommonPool] = useState(10000);
+  const [commonPool, setCommonPool] = useState();
   const [transactions, setTransactions] = useState([]);
-  console.log("transactions", transactions);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+
+  const apiUrl = '/api/transactionsapi'
 
   useEffect(() => {
-    // Sample data (Replace with your API call)
-    //  call api
-    // setTransactions(sampleData);
+    const fetchTransactions = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+          throw new Error(`API request failed with status ${response.status}`);
+        }
+        let data = await response.json();
+        setCommonPool(data.pop())
+        setTransactions(data);
+      } catch (error) {
+        console.error("Error fetching members:", error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchTransactions();
   }, []);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p className="text-red-500">Error: {error}</p>;
+  }
+
 
   return (
     <div className="flex  justify-center bg-black text-white pt-20 ">
       <div className=" mx-20 w-80 mt-60 ">
-        <h2 className="text-3xl mb-4">Loan Section</h2>
         <p className="mb-4 text-5xl font-bold">Common Pool: ₹{commonPool}</p>
       </div>
 
@@ -23,22 +51,29 @@ const Home = () => {
         <h3 className=" mb-4 text-2xl ">Recent Transactions</h3>
         <div className="overflow-y-scroll h-[90vh]">
           <ul className="">
-            {transactions.slice(0, 10).map((transaction, index) => (
-              <li
-                key={index}
-                className={`mb-4 ${
-                  transaction.type === "Loan"
-                    ? "bg-red-200 text-black"
-                    : "bg-green-200 text-black"
-                }`}
-              >
-                <p> Name : {transaction.NAME}</p>
-                <p> Phone Number : {transaction.phoneNumber}</p>
-                <p> Amount : {transaction.ca}</p>
-                <p> Duration : {transaction.duration} months</p>
-                <p> Interest Rate : {transaction.Interest_Rate}%</p>
-                <p> Members : {transaction.members}</p>
-                <p> Date : {transaction.Date_Of_Issue}</p>
+
+            {transactions.slice(0, 10).reverse().map((transaction, index) => (
+              <li key={index} className="mb-4 w-50">
+                {transaction.type === "Loan" ? (
+                  <>
+                    <p>Member ID: {transaction.lmid}</p>
+                    <p>Name: {transaction.NAME}</p>
+                    <p>Amount: {transaction.loan_amount}</p>
+                    <p>Interest Rate: {transaction.Interest_Rate}%</p>
+                    <p>Duration: {transaction.duration} months</p>
+                    <p>Date: {transaction.Date_Of_Issue.substr(0,10)}</p>
+                    <p>Type: {transaction.type}</p>
+                  </>
+                ) : transaction.type === "Contribution" ? (
+                    <>
+                      <p>Member ID: {transaction.cmid}</p>
+                      <p>Name: {transaction.NAME}</p>
+                      <p>Amount: {transaction.ca}</p>
+                      <p>Date: {transaction.DoC.substr(0,10)}</p>
+                      <p>Type: {transaction.type}</p>
+                    </>
+                ): null}
+
               </li>
             ))}
           </ul>

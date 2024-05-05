@@ -3,12 +3,41 @@ import React, { useEffect, useState } from "react";
 const Savings = () => {
   const [shgMembers, setShgMembers] = useState([]);
 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const apiUrl = '/api/getsavingsapi';
+
   useEffect(() => {
-    const savedMembers = localStorage.getItem("savings");
-    if (savedMembers) {
-      setShgMembers(JSON.parse(savedMembers));
-    }
+    const fetchMembers = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+          throw new Error(`API request failed with status ${response.status}`);
+        }
+        const data = await response.json();
+        setShgMembers(data);
+      } catch (error) {
+        console.error("Error fetching members:", error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMembers();
   }, []);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p className="text-red-500">Error: {error}</p>;
+  }
+
 
   return (
     <div className="pt-20 mx-10">
@@ -19,10 +48,10 @@ const Savings = () => {
             key={member.id}
             className="bg-white rounded-lg shadow-md p-4 mb-4"
           >
-            <h4 className="text-xl font-semibold mb-2">{member.name}</h4>
-            <p>ID: {member.id}</p>
+            <h4 className="text-xl font-semibold mb-2">{member.NAME}</h4>
+            <p>ID: {member.memberid}</p>
             <p>Amount Contributed: ₹{member.amount}</p>
-            <p>Date: {member.date}</p>
+            <p>Date: {member.Date_of_Contribution.substr(0,10)}</p>
           </div>
         ))}
       </div>
@@ -30,4 +59,6 @@ const Savings = () => {
   );
 };
 
+
 export default Savings;
+

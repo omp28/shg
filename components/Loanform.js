@@ -5,10 +5,8 @@ const LoanForm = ({ onSaveLoan }) => {
     amount: "",
     duration: "",
     interest: "",
-    members: [],
-    name: "",
-    membershipId: "",
-    phoneNumber: "",
+    date: "",
+    membershipId: ""
   });
 
   const handleInputChange = (e) => {
@@ -16,54 +14,37 @@ const LoanForm = ({ onSaveLoan }) => {
     setLoanData({ ...loanData, [name]: value });
   };
 
-  const handleCheckboxChange = (member) => {
-    const index = loanData.members.indexOf(member);
-    if (index === -1) {
-      setLoanData({ ...loanData, members: [...loanData.members, member] });
-    } else {
-      const updatedMembers = [...loanData.members];
-      updatedMembers.splice(index, 1);
-      setLoanData({ ...loanData, members: updatedMembers });
-    }
-  };
-
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    onSaveLoan({
-      ...loanData,
-      name: loanData.name,
-      phoneNumber: loanData.phoneNumber,
-    });
-    setLoanData({
-      amount: "",
-      duration: "",
-      interest: "",
-      members: [],
-      name: "",
-      membershipId: "",
-      phoneNumber: "",
-    });
+    try {
+      const response = await fetch("/api/loanapi", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(loanData),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to save loan");
+      }
+      onSaveLoan(loanData);
+    } catch (error) {
+      console.error("Error saving loan:", error.message);
+    } finally {
+      setLoanData({
+        amount: "",
+        duration: "",
+        interest: "",
+        date: "",
+        membershipId: ""
+      });
+    }
   };
 
   return (
     <div className="flex justify-center items-center h-screen bg-black text-white w-96 mt-10">
       <form onSubmit={handleFormSubmit} className="bg-gray-800 p-8 rounded-lg">
         <div className="mb-4 w-96">
-          <label htmlFor="name" className="block mb-2">
-            Name:
-          </label>
-          <input
-            type="text"
-            name="name"
-            id="name"
-            value={loanData.name}
-            onChange={handleInputChange}
-            placeholder="Enter Name"
-            required
-            className="w-full px-3 py-2 rounded bg-gray-700 focus:outline-none focus:bg-gray-600"
-          />
-        </div>
-        <div className="mb-4">
           <label htmlFor="membershipId" className="block mb-2">
             SHG Membership ID:
           </label>
@@ -74,21 +55,6 @@ const LoanForm = ({ onSaveLoan }) => {
             value={loanData.membershipId}
             onChange={handleInputChange}
             placeholder="Enter SHG Membership ID"
-            required
-            className="w-full px-3 py-2 rounded bg-gray-700 focus:outline-none focus:bg-gray-600"
-          />
-        </div>
-        <div className="mb-4">
-          <label htmlFor="phoneNumber" className="block mb-2">
-            Phone Number:
-          </label>
-          <input
-            type="tel"
-            name="phoneNumber"
-            id="phoneNumber"
-            value={loanData.phoneNumber}
-            onChange={handleInputChange}
-            placeholder="Enter Phone Number"
             required
             className="w-full px-3 py-2 rounded bg-gray-700 focus:outline-none focus:bg-gray-600"
           />
@@ -124,6 +90,23 @@ const LoanForm = ({ onSaveLoan }) => {
           />
         </div>
         <div className="mb-4">
+            <label
+              htmlFor="date"
+              className="block mb-2"
+            >
+              Date
+            </label>
+            <input
+              type="date"
+              id="date"
+              name="date"
+              value={loanData.date}
+              onChange={handleInputChange}
+              required
+              className="w-full px-3 py-2 rounded bg-gray-700 focus:outline-none focus:bg-gray-600 text-gray-400"
+            />
+          </div>
+        <div className="mb-4">
           <label htmlFor="interest" className="block mb-2">
             Interest Rate (%):
           </label>
@@ -137,22 +120,6 @@ const LoanForm = ({ onSaveLoan }) => {
             required
             className="w-full px-3 py-2 rounded bg-gray-700 focus:outline-none focus:bg-gray-600"
           />
-        </div>
-        <div className="mb-4">
-          <label className="block mb-2">SHG Members:</label>
-          <div>
-            <input
-              type="checkbox"
-              id="member1"
-              name="member1"
-              onChange={() => handleCheckboxChange("Member 1")}
-              checked={loanData.members.includes("Member 1")}
-            />
-            <label htmlFor="member1" className="ml-2 text-gray-300">
-              Member 1
-            </label>
-          </div>
-          {/* Add more members as needed */}
         </div>
         <button
           type="submit"

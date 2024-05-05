@@ -3,25 +3,46 @@ import { useRouter } from "next/router";
 
 const AddSaving = () => {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [amount, setAmount] = useState("");
-  const [date, setDate] = useState("");
-  const [id, setId] = useState("");
-  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+
+  const [formData, setFormData] = useState({
+    id: "",
+    amount: "",
+    date: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name || !amount || !date || !id) {
-      setError("Please fill all the fields");
-      return;
+
+    if (!Object.values(formData).every((value) => value !== "")) {
+        alert("Please fill out all fields before submitting.");
+        return;
     }
-    const saving = { name, amount, date, id };
-    let savings = [];
-    if (localStorage.getItem("savings")) {
-      savings = JSON.parse(localStorage.getItem("savings"));
+  
+    try {
+        const response = await fetch("/api/addsavingsapi", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+        });
+        if (!response.ok) {
+            throw new Error("Failed to save contribution");
+        }
+    } catch (error) {
+        console.error("Error saving contribution:", error.message);
     }
-    savings.push(saving);
-    localStorage.setItem("savings", JSON.stringify(savings));
+      
+
     router.push("/savings");
   };
 
@@ -29,20 +50,23 @@ const AddSaving = () => {
     <div className="bg-gray-200 h-screen flex justify-center items-center">
       <div className="bg-white p-8 rounded-lg shadow-lg w-96">
         <h2 className="text-2xl font-bold mb-4">Add Saving</h2>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
+
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
-              htmlFor="name"
+              htmlFor="id"
               className="block text-sm font-medium text-gray-700"
             >
-              Name
+              ID
             </label>
             <input
               type="text"
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              id="id"
+              name="id"
+              value={formData.id}
+              onChange={handleChange}
+              required
+
               className="mt-1 p-2 border border-gray-300 rounded w-full"
             />
           </div>
@@ -56,8 +80,12 @@ const AddSaving = () => {
             <input
               type="number"
               id="amount"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+
+              name="amount"
+              value={formData.amount}
+              onChange={handleChange}
+              required
+
               className="mt-1 p-2 border border-gray-300 rounded w-full"
             />
           </div>
@@ -71,23 +99,12 @@ const AddSaving = () => {
             <input
               type="date"
               id="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="mt-1 p-2 border border-gray-300 rounded w-full"
-            />
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="id"
-              className="block text-sm font-medium text-gray-700"
-            >
-              ID
-            </label>
-            <input
-              type="text"
-              id="id"
-              value={id}
-              onChange={(e) => setId(e.target.value)}
+
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+              required
+
               className="mt-1 p-2 border border-gray-300 rounded w-full"
             />
           </div>
@@ -103,4 +120,6 @@ const AddSaving = () => {
   );
 };
 
+
 export default AddSaving;
+
