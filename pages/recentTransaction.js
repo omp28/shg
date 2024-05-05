@@ -7,32 +7,10 @@ const Home = () => {
   console.log("transactions", transactions);
 
   useEffect(() => {
-    const storedTransactions =
-      JSON.parse(localStorage.getItem("transactions")) || [];
-    const storedCommonPool =
-      JSON.parse(localStorage.getItem("commonPool")) || [];
-    console.log("storedCommonPool", storedCommonPool);
-
-    setTransactions(storedTransactions);
-    setCommonPool(storedCommonPool);
+    // Sample data (Replace with your API call)
+    //  call api
+    // setTransactions(sampleData);
   }, []);
-
-  const handleSaveLoan = (loanData) => {
-    const { amount, duration, interest, members } = loanData;
-    setCommonPool(commonPool - parseFloat(amount));
-    const newTransaction = {
-      name: loanData.name,
-      phoneNumber: loanData.phoneNumber,
-      amount: parseFloat(amount),
-      duration: parseInt(duration),
-      interest: parseFloat(interest),
-      members: members.join(", "),
-      date: new Date().toLocaleDateString(),
-    };
-    const updatedTransactions = [newTransaction, ...transactions];
-    setTransactions(updatedTransactions);
-    localStorage.setItem("transactions", JSON.stringify(updatedTransactions));
-  };
 
   return (
     <div className="flex  justify-center bg-black text-white pt-20 ">
@@ -46,14 +24,21 @@ const Home = () => {
         <div className="overflow-y-scroll h-[90vh]">
           <ul className="">
             {transactions.slice(0, 10).map((transaction, index) => (
-              <li key={index} className="mb-4">
-                <p> Name : {transaction.name}</p>
+              <li
+                key={index}
+                className={`mb-4 ${
+                  transaction.type === "Loan"
+                    ? "bg-red-200 text-black"
+                    : "bg-green-200 text-black"
+                }`}
+              >
+                <p> Name : {transaction.NAME}</p>
                 <p> Phone Number : {transaction.phoneNumber}</p>
-                <p> Amount : {transaction.amount}</p>
+                <p> Amount : {transaction.ca}</p>
                 <p> Duration : {transaction.duration} months</p>
-                <p> Interest Rate : {transaction.interest}%</p>
+                <p> Interest Rate : {transaction.Interest_Rate}%</p>
                 <p> Members : {transaction.members}</p>
-                <p> Date : {transaction.date}</p>
+                <p> Date : {transaction.Date_Of_Issue}</p>
               </li>
             ))}
           </ul>
