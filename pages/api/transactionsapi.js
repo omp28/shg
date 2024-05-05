@@ -31,6 +31,16 @@ export default async function handler(req, res) {
         LEFT JOIN contributions c ON t.contriID = c.ContriID
         INNER JOIN members m ON (l.memberid = m.MemberID OR c.memberid = m.MemberID)`
     );
+    let newpool = 0
+    let cpool = await connection.query(
+      `select sum(amount) from contributions`
+    )
+    let lpool = await connection.query(
+      `select sum(amount) from loan`
+    )
+    newpool += parseInt(cpool[0][0][`sum(amount)`])
+    newpool -= parseInt(lpool[0][0][`sum(amount)`])
+    members.push(newpool)
     connection.release();
     res.status(200).json(members);
   } catch (error) {

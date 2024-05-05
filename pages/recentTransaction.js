@@ -12,21 +12,13 @@ const Home = () => {
     const fetchTransactions = async () => {
       setLoading(true);
       setError(null);
-      let pool = 0
       try {
         const response = await fetch(apiUrl);
         if (!response.ok) {
           throw new Error(`API request failed with status ${response.status}`);
         }
-        const data = await response.json();
-        data.forEach(transaction => {
-          if (transaction.type === 'Loan') {
-            pool=pool-transaction.loan_amount
-          } else {
-            pool=pool+transaction.ca
-          }
-        });
-        setCommonPool(pool)
+        let data = await response.json();
+        setCommonPool(data.pop())
         setTransactions(data);
       } catch (error) {
         console.error("Error fetching members:", error);

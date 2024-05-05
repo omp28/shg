@@ -2,46 +2,41 @@ import React, { useState, useEffect } from "react";
 import LoanForm from "../components/Loanform";
 
 const Home = () => {
-  const initialCommonPool = 10000;
+  const [commonPool, setCommonPool] = useState();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const [commonPool, setCommonPool] = useState(initialCommonPool);
-
-  const [transactions, setTransactions] = useState([]);
+  const apiUrl = '/api/loanapi';
 
   useEffect(() => {
-    const storedTransactions =
-      JSON.parse(localStorage.getItem("transactions")) || [];
-    setTransactions(storedTransactions);
+    const fetchMembers = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+          throw new Error(`API request failed with status ${response.status}`);
+        }
+        const data = await response.json();
+        setCommonPool(data);
+      } catch (error) {
+        console.error("Error fetching members:", error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    const storedCommonPool = JSON.parse(localStorage.getItem("commonPool"));
-    if (storedCommonPool !== null) {
-      setCommonPool(storedCommonPool);
-    } else {
-      setCommonPool(initialCommonPool);
-    }
+    fetchMembers();
   }, []);
 
-  const handleSaveLoan = (loanData) => {
-    const { amount, duration, interest, members } = loanData;
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
-    const updatedCommonPool = commonPool - parseFloat(amount);
-    setCommonPool(updatedCommonPool);
-
-    const newTransaction = {
-      name: loanData.name,
-      phoneNumber: loanData.phoneNumber,
-      amount: parseFloat(amount),
-      duration: parseInt(duration),
-      interest: parseFloat(interest),
-      members: members.join(", "),
-      date: new Date().toLocaleDateString(),
-    };
-    const updatedTransactions = [newTransaction, ...transactions];
-    setTransactions(updatedTransactions);
-
-    localStorage.setItem("commonPool", JSON.stringify(updatedCommonPool));
-    localStorage.setItem("transactions", JSON.stringify(updatedTransactions));
-  };
+  if (error) {
+    return <p className="text-red-500">Error: {error}</p>;
+  }
 
   return (
     <div className="flex items-center justify-center h-full bg-black text-white">
@@ -50,7 +45,7 @@ const Home = () => {
         <p className="mb-4 text-5xl font-bold">Common Pool: ₹{commonPool}</p>
       </div>
       <div className=" mx-20 w-80">
-        <LoanForm onSaveLoan={handleSaveLoan} />
+        <LoanForm />
       </div>
     </div>
   );

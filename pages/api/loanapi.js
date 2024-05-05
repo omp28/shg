@@ -29,13 +29,20 @@ export default async function postQuery(req, res, connection) {
       `insert into transactions (transactionid, loanid, type) values (?, ?, "Loan")`,
       [tid, loanid]
     );
+    let newpool = 0
+    let cpool = await connection.query(
+      `select sum(amount) from contributions`
+    )
+    let lpool = await connection.query(
+      `select sum(amount) from loan`
+    )
+    newpool += parseInt(cpool[0][0][`sum(amount)`])
+    newpool -= parseInt(lpool[0][0][`sum(amount)`])
     await connection.commit();
     connection.release();
-    console.log('Data inserted successfully');
-    res.status(200).json({ success: true, message: "Data inserted successfully" });
+    res.status(200).json(newpool);
   } catch (error) {
     console.error('Error inserting data:', error.message);
-    // Only rollback if connection was obtained successfully
     if (connection) {
       await connection.rollback();
     }
