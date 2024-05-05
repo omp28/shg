@@ -6,6 +6,7 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+
   const apiUrl = '/api/transactionsapi'
 
   useEffect(() => {
@@ -39,6 +40,7 @@ const Home = () => {
     return <p className="text-red-500">Error: {error}</p>;
   }
 
+
   return (
     <div className="flex  justify-center bg-black text-white pt-20 ">
       <div className=" mx-20 w-80 mt-60 ">
@@ -49,6 +51,7 @@ const Home = () => {
         <h3 className=" mb-4 text-2xl ">Recent Transactions</h3>
         <div className="overflow-y-scroll h-[90vh]">
           <ul className="">
+
             {transactions.slice(0, 10).reverse().map((transaction, index) => (
               <li key={index} className="mb-4 w-50">
                 {transaction.type === "Loan" ? (
@@ -70,6 +73,7 @@ const Home = () => {
                       <p>Type: {transaction.type}</p>
                     </>
                 ): null}
+
               </li>
             ))}
           </ul>

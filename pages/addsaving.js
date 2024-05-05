@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 const AddSaving = () => {
   const router = useRouter();
 
+
   const [formData, setFormData] = useState({
     id: "",
     amount: "",
@@ -41,6 +42,7 @@ const AddSaving = () => {
         console.error("Error saving contribution:", error.message);
     }
       
+
     router.push("/savings");
   };
 
@@ -48,6 +50,7 @@ const AddSaving = () => {
     <div className="bg-gray-200 h-screen flex justify-center items-center">
       <div className="bg-white p-8 rounded-lg shadow-lg w-96">
         <h2 className="text-2xl font-bold mb-4">Add Saving</h2>
+
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
@@ -63,6 +66,7 @@ const AddSaving = () => {
               value={formData.id}
               onChange={handleChange}
               required
+
               className="mt-1 p-2 border border-gray-300 rounded w-full"
             />
           </div>
@@ -76,10 +80,12 @@ const AddSaving = () => {
             <input
               type="number"
               id="amount"
+
               name="amount"
               value={formData.amount}
               onChange={handleChange}
               required
+
               className="mt-1 p-2 border border-gray-300 rounded w-full"
             />
           </div>
@@ -93,10 +99,12 @@ const AddSaving = () => {
             <input
               type="date"
               id="date"
+
               name="date"
               value={formData.date}
               onChange={handleChange}
               required
+
               className="mt-1 p-2 border border-gray-300 rounded w-full"
             />
           </div>
@@ -112,4 +120,6 @@ const AddSaving = () => {
   );
 };
 
+
 export default AddSaving;
+

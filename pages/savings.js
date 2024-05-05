@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 const Savings = () => {
   const [shgMembers, setShgMembers] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -37,6 +38,7 @@ const Savings = () => {
     return <p className="text-red-500">Error: {error}</p>;
   }
 
+
   return (
     <div className="pt-20 mx-10">
       <h3 className="text-2xl mb-4">Savings Section</h3>
@@ -57,4 +59,6 @@ const Savings = () => {
   );
 };
 
+
 export default Savings;
+
