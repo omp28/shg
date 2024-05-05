@@ -18,7 +18,7 @@ export default async function postQuery(req, res, connection) {
       `select transactionid from transactions order by transactionid desc limit 1`
     )
     if (checkid[0].length != 0){
-      tid = parseInt(checkid[0][0].transactionID)
+      tid = parseInt(checkid[0][0].transactionid)
     }
     tid += 1;
     await connection.query(

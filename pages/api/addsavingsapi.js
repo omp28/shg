@@ -14,7 +14,7 @@ export default async function handler(req, res, connection) {
       `select contriID from contributions order by contriID desc limit 1`
     );
     if (checkid[0].length != 0){
-      cid = parseInt(checkid[0][0].ContriID)
+      cid = parseInt(checkid[0][0].contriID)
     }
     cid += 1;
     let tid = 0;
@@ -22,7 +22,7 @@ export default async function handler(req, res, connection) {
       `select transactionid from transactions order by transactionid desc limit 1`
     )
     if (checkid[0].length != 0){
-      tid = parseInt(checkid[0][0].transactionID)
+      tid = parseInt(checkid[0][0].transactionid)
     }
     tid += 1;
     await connection.query(

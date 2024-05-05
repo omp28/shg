@@ -5,26 +5,13 @@ const LoanForm = ({ onSaveLoan }) => {
     amount: "",
     duration: "",
     interest: "",
-    members: [],
     date: "",
-    membershipId: "",
-    phoneNumber: "",
+    membershipId: ""
   });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setLoanData({ ...loanData, [name]: value });
-  };
-
-  const handleCheckboxChange = (member) => {
-    const index = loanData.members.indexOf(member);
-    if (index === -1) {
-      setLoanData({ ...loanData, members: [...loanData.members, member] });
-    } else {
-      const updatedMembers = [...loanData.members];
-      updatedMembers.splice(index, 1);
-      setLoanData({ ...loanData, members: updatedMembers });
-    }
   };
 
   const handleFormSubmit = async (e) => {
@@ -40,20 +27,17 @@ const LoanForm = ({ onSaveLoan }) => {
       if (!response.ok) {
         throw new Error("Failed to save loan");
       }
-      // Assuming the response from the server indicates success
       onSaveLoan(loanData);
+    } catch (error) {
+      console.error("Error saving loan:", error.message);
+    } finally {
       setLoanData({
         amount: "",
         duration: "",
         interest: "",
-        members: [],
         date: "",
-        membershipId: "",
-        phoneNumber: "",
+        membershipId: ""
       });
-    } catch (error) {
-      console.error("Error saving loan:", error.message);
-      // Handle error state or display error message to the user
     }
   };
 

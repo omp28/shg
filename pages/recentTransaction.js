@@ -1,43 +1,55 @@
 import React, { useState, useEffect } from "react";
-import LoanForm from "../components/Loanform";
 
 const Home = () => {
-  const [commonPool, setCommonPool] = useState(10000);
+  const [commonPool, setCommonPool] = useState();
   const [transactions, setTransactions] = useState([]);
-  console.log("transactions", transactions);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const apiUrl = '/api/transactionsapi'
 
   useEffect(() => {
-    const storedTransactions =
-      JSON.parse(localStorage.getItem("transactions")) || [];
-    const storedCommonPool =
-      JSON.parse(localStorage.getItem("commonPool")) || [];
-    console.log("storedCommonPool", storedCommonPool);
-
-    setTransactions(storedTransactions);
-    setCommonPool(storedCommonPool);
+    const fetchTransactions = async () => {
+      setLoading(true);
+      setError(null);
+      let pool = 0
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+          throw new Error(`API request failed with status ${response.status}`);
+        }
+        const data = await response.json();
+        data.forEach(transaction => {
+          if (transaction.type === 'Loan') {
+            pool=pool-transaction.loan_amount
+          } else {
+            pool=pool+transaction.ca
+          }
+        });
+        setCommonPool(pool)
+        setTransactions(data);
+      } catch (error) {
+        console.error("Error fetching members:", error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchTransactions();
   }, []);
 
-  const handleSaveLoan = (loanData) => {
-    const { amount, duration, interest, members } = loanData;
-    setCommonPool(commonPool - parseFloat(amount));
-    const newTransaction = {
-      name: loanData.name,
-      phoneNumber: loanData.phoneNumber,
-      amount: parseFloat(amount),
-      duration: parseInt(duration),
-      interest: parseFloat(interest),
-      members: members.join(", "),
-      date: new Date().toLocaleDateString(),
-    };
-    const updatedTransactions = [newTransaction, ...transactions];
-    setTransactions(updatedTransactions);
-    localStorage.setItem("transactions", JSON.stringify(updatedTransactions));
-  };
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p className="text-red-500">Error: {error}</p>;
+  }
 
   return (
     <div className="flex  justify-center bg-black text-white pt-20 ">
       <div className=" mx-20 w-80 mt-60 ">
-        <h2 className="text-3xl mb-4">Loan Section</h2>
         <p className="mb-4 text-5xl font-bold">Common Pool: ₹{commonPool}</p>
       </div>
 
@@ -45,15 +57,27 @@ const Home = () => {
         <h3 className=" mb-4 text-2xl ">Recent Transactions</h3>
         <div className="overflow-y-scroll h-[90vh]">
           <ul className="">
-            {transactions.slice(0, 10).map((transaction, index) => (
-              <li key={index} className="mb-4">
-                <p> Name : {transaction.name}</p>
-                <p> Phone Number : {transaction.phoneNumber}</p>
-                <p> Amount : {transaction.amount}</p>
-                <p> Duration : {transaction.duration} months</p>
-                <p> Interest Rate : {transaction.interest}%</p>
-                <p> Members : {transaction.members}</p>
-                <p> Date : {transaction.date}</p>
+            {transactions.slice(0, 10).reverse().map((transaction, index) => (
+              <li key={index} className="mb-4 w-50">
+                {transaction.type === "Loan" ? (
+                  <>
+                    <p>Member ID: {transaction.lmid}</p>
+                    <p>Name: {transaction.NAME}</p>
+                    <p>Amount: {transaction.loan_amount}</p>
+                    <p>Interest Rate: {transaction.Interest_Rate}%</p>
+                    <p>Duration: {transaction.duration} months</p>
+                    <p>Date: {transaction.Date_Of_Issue.substr(0,10)}</p>
+                    <p>Type: {transaction.type}</p>
+                  </>
+                ) : transaction.type === "Contribution" ? (
+                    <>
+                      <p>Member ID: {transaction.cmid}</p>
+                      <p>Name: {transaction.NAME}</p>
+                      <p>Amount: {transaction.ca}</p>
+                      <p>Date: {transaction.DoC.substr(0,10)}</p>
+                      <p>Type: {transaction.type}</p>
+                    </>
+                ): null}
               </li>
             ))}
           </ul>

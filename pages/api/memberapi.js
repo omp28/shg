@@ -14,7 +14,7 @@ export default async function handler(req, res, connection) {
       `select memberID from members order by memberID desc limit 1`
     );
     if (checkid[0].length != 0){
-      latestID = parseInt(checkid[0][0].loanid)
+      latestID = parseInt(checkid[0][0].memberID)
     }
     latestID += 1;
     const [result] = await connection.query(
